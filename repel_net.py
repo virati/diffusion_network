@@ -11,13 +11,14 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
 class diff_net:
-    def __init__(self,nodes=100):
+    def __init__(self,nodes=100,repuls_strength=1):
         self.N = nodes
         self.set_L()
         self.state = np.zeros((self.N,2))
         self.state[0:50] = np.random.normal(5,2,(int(self.N/2),2))
         self.state[50:100] = np.random.normal(-5,2,(int(self.N/2),2))
         self.state_raster = []
+        self.repuls_strength = repuls_strength
         
     def set_L(self):
         self._L = np.zeros((self.N,self.N))
@@ -35,7 +36,7 @@ class diff_net:
         update = -np.dot(self._L,state)
         update = np.tanh(update)
         #pdb.set_trace()
-        return 1*update
+        return self.repuls_strength*update
     
 
     def integrator(self):
@@ -91,7 +92,7 @@ class AnimatedGif:
 
 #%%
 # Setup and run the diffusion
-net = diff_net()
+net = diff_net(repuls_strength=1)
 net.run_sim()
 
 #%%
