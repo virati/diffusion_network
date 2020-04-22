@@ -11,12 +11,14 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
 class diff_net:
-    def __init__(self,nodes=100,repuls_strength=1):
+    def __init__(self,nodes=100,repuls_strength=1,pop_p=0.5):
         self.N = nodes
         self.set_L()
         self.state = np.zeros((self.N,2))
-        self.state[0:50] = np.random.normal(5,2,(int(self.N/2),2))
-        self.state[50:100] = np.random.normal(-5,2,(int(self.N/2),2))
+        
+        n_class1 = int(pop_p * self.N)
+        self.state[:n_class1] = np.random.normal(5,2,(n_class1,2))
+        self.state[n_class1:] = np.random.normal(-5,2,(self.N - n_class1,2))
         self.state_raster = []
         self.repuls_strength = repuls_strength
         
@@ -33,7 +35,7 @@ class diff_net:
         # do a symmetric copy
         
     def dynamics(self,state):
-        update = -np.dot(self._L,state)
+        update = np.dot(self._L,state)
         update = np.tanh(update)
         #pdb.set_trace()
         return self.repuls_strength*update
@@ -50,7 +52,7 @@ class diff_net:
         
         return new_state
     
-    def run_sim(self,tend=10,dt=0.1):
+    def run_sim(self,tend=10,dt=0.01):
         self.dt = dt
         for tt in np.arange(0,tend,dt):
             print(tt)
@@ -92,7 +94,7 @@ class AnimatedGif:
 
 #%%
 # Setup and run the diffusion
-net = diff_net(repuls_strength=1)
+net = diff_net(repuls_strength=-1)
 net.run_sim()
 
 #%%
@@ -102,7 +104,8 @@ gif.add(net.state_raster[0],label='0')
 for tt in range(100):
     gif.add(net.state_raster[tt])
     
-gif.save('/tmp/repeldiff_repuls.gif')
+gif.save('/tmp/repeldiff_repuls_' + str(net.repuls_strength) +'.gif')
+plt.close('all')
 
 
 #%%
