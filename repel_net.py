@@ -31,8 +31,8 @@ class diff_net:
                 self._L[jj,ii] = 1
         
         #can be simplified into
-        # self._L = np.array([[1 for jj in range(ii,50)] for ii in range(50)])
-        # do a symmetric copy
+        #self._L = np.array([[1 for jj in range(ii,50)] for ii in range(50)])
+        #do a symmetric copy
         
     def dynamics(self,state):
         update = np.dot(self._L,state)
